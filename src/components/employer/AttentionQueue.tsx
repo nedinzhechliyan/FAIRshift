@@ -3,6 +3,7 @@ import { Button } from '../ui/Button';
 import { Badge, BadgeVariant } from '../ui/Badge';
 import { Drawer } from '../ui/Drawer';
 import { useToast } from '../ui/Toast';
+import { ReportCaseSummary, WorkerProfile } from '../../types';
 import { 
   AlertOctagon, 
   AlertTriangle, 
@@ -31,7 +32,7 @@ export interface AttentionQueueItem {
   targetId: string;
   timestamp?: string;
   workerName?: string;
-  details?: any;
+  details?: Record<string, unknown>;
 }
 
 interface AttentionQueueProps {
@@ -48,8 +49,8 @@ export const AttentionQueue: React.FC<AttentionQueueProps> = ({
   const { showToast } = useToast();
   const [items, setItems] = useState<AttentionQueueItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [activeDrawerCase, setActiveDrawerCase] = useState<any | null>(null);
-  const [activeRestWorker, setActiveRestWorker] = useState<any | null>(null);
+  const [activeDrawerCase, setActiveDrawerCase] = useState<ReportCaseSummary | null>(null);
+  const [activeRestWorker, setActiveRestWorker] = useState<WorkerProfile | null>(null);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
@@ -77,7 +78,7 @@ export const AttentionQueue: React.FC<AttentionQueueProps> = ({
       prevItemIdsRef.current = new Set(newItems.map(i => i.id));
       setItems(newItems);
       setLastUpdated(new Date());
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (!isBackgroundPoll) console.warn('Could not load queue:', err);
     } finally {
       if (!isBackgroundPoll) setLoading(false);
@@ -128,8 +129,8 @@ export const AttentionQueue: React.FC<AttentionQueueProps> = ({
         } else {
           showToast('Could not assign rest day', 'error');
         }
-      } catch (err: any) {
-        showToast(err.message, 'error');
+      } catch (err: unknown) {
+        showToast(err instanceof Error ? err.message : 'Failed to assign rest day', 'error');
       } finally {
         setProcessingId(null);
       }
@@ -151,8 +152,8 @@ export const AttentionQueue: React.FC<AttentionQueueProps> = ({
         } else {
           showToast('Failed to acknowledge case', 'error');
         }
-      } catch (err: any) {
-        showToast(err.message, 'error');
+      } catch (err: unknown) {
+        showToast(err instanceof Error ? err.message : 'Failed to acknowledge case', 'error');
       } finally {
         setProcessingId(null);
       }
@@ -160,7 +161,7 @@ export const AttentionQueue: React.FC<AttentionQueueProps> = ({
       if (onSelectCase) {
         onSelectCase(item.targetId);
       } else {
-        setActiveDrawerCase(item.details || { caseCode: item.targetId, summaryEn: item.reason });
+        setActiveDrawerCase((item.details as unknown as ReportCaseSummary) || { caseCode: item.targetId, summaryEn: item.reason } as unknown as ReportCaseSummary);
       }
     }
   };

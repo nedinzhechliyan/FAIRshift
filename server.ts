@@ -211,8 +211,8 @@ app.post('/api/shifts/check-out', async (req: Request, res: Response) => {
   try {
     const shift = await repository.checkOutWorker(parsed.data);
     res.json({ success: true, shift });
-  } catch (err: any) {
-    res.status(400).json({ error: err.message });
+  } catch (err: unknown) {
+    res.status(400).json({ error: err instanceof Error ? err.message : String(err) });
   }
 });
 
@@ -269,7 +269,7 @@ async function processAnonymousReport(input: {
   // Rule: Transcripts are UNTRUSTED. Prompt injection defence: System prompt explicitly instructs model to ignore directives in text.
   // Rule: Safety floor keyword check runs deterministically AFTER model to prevent any downgrade.
 
-  let aiOutput: any = null;
+  let aiOutput: z.infer<typeof ReportAiOutputSchema> | null = null;
 
   if (apiKey) {
     try {
@@ -315,7 +315,7 @@ Classify this report and output STRICT JSON conforming to this schema:
 
       const parsed = JSON.parse(response.text || '{}');
       aiOutput = ReportAiOutputSchema.parse(parsed);
-    } catch (err: any) {
+    } catch (err: unknown) {
       safeLogger.warn('[AnonymousReportPipeline] Gemini call timed out or failed. Activating deterministic fallback.');
     }
   }
@@ -417,8 +417,8 @@ app.post('/api/reports/voice', rateLimitReportRoute, async (req: Request, res: R
       summaryEn: report.summaryEn,
       createdAtHour: report.createdAt,
     });
-  } catch (err: any) {
-    safeLogger.error('[AnonymousReportPipeline] Error saving voice report:', err.message);
+  } catch (err: unknown) {
+    safeLogger.error('[AnonymousReportPipeline] Error saving voice report:', err instanceof Error ? err.message : String(err));
     res.status(500).json({ error: 'Could not process report anonymously' });
   }
 });
@@ -458,8 +458,8 @@ app.post('/api/reports/text', rateLimitReportRoute, async (req: Request, res: Re
       summaryEn: report.summaryEn,
       createdAtHour: report.createdAt,
     });
-  } catch (err: any) {
-    safeLogger.error('[AnonymousReportPipeline] Error saving text report:', err.message);
+  } catch (err: unknown) {
+    safeLogger.error('[AnonymousReportPipeline] Error saving text report:', err instanceof Error ? err.message : String(err));
     res.status(500).json({ error: 'Could not process report anonymously' });
   }
 });
@@ -692,8 +692,8 @@ app.post('/api/shifts/sync', async (req: Request, res: Response) => {
 
     processedEventUuids.add(uuid);
     res.json({ success: true, shift: resultShift, clockSkewFlagged });
-  } catch (err: any) {
-    res.status(400).json({ error: err.message });
+  } catch (err: unknown) {
+    res.status(400).json({ error: err instanceof Error ? err.message : String(err) });
   }
 });
 
@@ -755,8 +755,8 @@ Rules:
     }
 
     res.json({ explanation: validation.sanitizedText, validated: true, fallbackUsed: false });
-  } catch (err: any) {
-    console.warn('[FairShift AI] Explanation call failed/timed out, using deterministic template:', err.message);
+  } catch (err: unknown) {
+    console.warn('[FairShift AI] Explanation call failed/timed out, using deterministic template:', err instanceof Error ? err.message : String(err));
     const fallbackText = getDeterministicPayslipTemplate(engineResult, lang);
     res.json({ explanation: fallbackText, validated: true, fallbackUsed: true });
   }
@@ -896,10 +896,11 @@ Output JSON only. Do not wrap in markdown quotes if possible.`;
     const validated = ReportAiOutputSchema.parse(parsedJson);
 
     return res.json({ result: validated, fallbackUsed: false });
-  } catch (err: any) {
-    console.warn('[FairShift AI] Gemini call failed or timed out. Gracefully activating deterministic fallback:', err.message);
+  } catch (err: unknown) {
+    const errMsg = err instanceof Error ? err.message : String(err);
+    console.warn('[FairShift AI] Gemini call failed or timed out. Gracefully activating deterministic fallback:', errMsg);
     const result = runFallback(textContent || 'Hazard reported on site', languageHint || 'en');
-    return res.json({ result, fallbackUsed: true, error: err.message });
+    return res.json({ result, fallbackUsed: true, error: errMsg });
   }
 });
 

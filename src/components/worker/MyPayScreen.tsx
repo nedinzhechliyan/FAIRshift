@@ -23,7 +23,7 @@ interface MyPayScreenProps {
   workerName: string;
   baseHourlyRate: number;
   onBack: () => void;
-  onRaiseIssue?: (draft: any) => void;
+  onRaiseIssue?: (draft: { category: string; subcategory: string; netPay: number }) => void;
 }
 
 export const MyPayScreen: React.FC<MyPayScreenProps> = ({

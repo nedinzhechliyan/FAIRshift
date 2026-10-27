@@ -3,8 +3,7 @@ import { useI18n, SUPPORTED_LANGUAGES, SupportedLanguage } from '../../i18n';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { AudioSpeakerButton } from '../ui/AudioSpeakerButton';
-import { SECTOR_CONFIGS } from '../../config/siteRules';
-import { HardHat, Building2, User, Globe, Check, ShieldCheck } from 'lucide-react';
+import { Building2, User, Globe, Check, ShieldCheck } from 'lucide-react';
 
 export interface WorkerOption {
   id: string;
@@ -66,7 +65,6 @@ export const WorkerLogin: React.FC<WorkerLoginProps> = ({ onLoginSuccess, onSwit
   const [loading, setLoading] = useState(false);
 
   const selectedWorker = DEMO_WORKERS.find(w => w.id === selectedWorkerId) || DEMO_WORKERS[0];
-  const siteConfig = SECTOR_CONFIGS[selectedWorker.siteId];
 
   const handleLanguageChange = (lang: SupportedLanguage) => {
     setLanguage(lang);

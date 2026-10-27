@@ -105,12 +105,12 @@ export function applySafetyFloor(
 
   // Flexible argument order: (text, severity, urgent) or (severity, urgent, text)
   if (['low', 'medium', 'high', 'critical'].includes(arg1)) {
-    modelSeverity = arg1 as any;
+    modelSeverity = arg1 as 'low' | 'medium' | 'high' | 'critical';
     modelUrgent = Boolean(arg2);
     text = String(arg3 || '');
   } else {
     text = String(arg1 || '');
-    modelSeverity = (arg2 as any) || 'low';
+    modelSeverity = (typeof arg2 === 'string' && ['low', 'medium', 'high', 'critical'].includes(arg2) ? arg2 : 'low') as 'low' | 'medium' | 'high' | 'critical';
     modelUrgent = Boolean(arg3);
   }
 

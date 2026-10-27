@@ -3,6 +3,7 @@ import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { Drawer } from '../ui/Drawer';
 import { useToast } from '../ui/Toast';
+import { ReportCaseSummary, TranscriptDetails } from '../../types';
 import { 
   ShieldAlert, 
   AlertTriangle, 
@@ -21,15 +22,15 @@ interface SupervisorCasesStubProps {
 
 export const SupervisorCasesStub: React.FC<SupervisorCasesStubProps> = ({ siteId }) => {
   const { showToast } = useToast();
-  const [cases, setCases] = useState<any[]>([]);
+  const [cases, setCases] = useState<ReportCaseSummary[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [selectedCase, setSelectedCase] = useState<any | null>(null);
+  const [selectedCase, setSelectedCase] = useState<ReportCaseSummary | null>(null);
   const [newStatus, setNewStatus] = useState<string>('open');
   const [supervisorNote, setSupervisorNote] = useState<string>('');
   const [updating, setUpdating] = useState<boolean>(false);
 
   // Transcript view drawer & audit
-  const [transcriptData, setTranscriptData] = useState<any | null>(null);
+  const [transcriptData, setTranscriptData] = useState<TranscriptDetails | null>(null);
   const [loadingTranscript, setLoadingTranscript] = useState<boolean>(false);
 
   const fetchCases = async () => {
@@ -70,8 +71,8 @@ export const SupervisorCasesStub: React.FC<SupervisorCasesStubProps> = ({ siteId
       showToast(`Case ${caseCode} updated to ${newStatus}`, 'success');
       setSelectedCase(null);
       fetchCases();
-    } catch (err: any) {
-      showToast(err.message, 'error');
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : 'Status update failed', 'error');
     } finally {
       setUpdating(false);
     }

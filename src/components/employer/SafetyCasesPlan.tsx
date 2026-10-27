@@ -4,6 +4,7 @@ import { Badge } from '../ui/Badge';
 import { Drawer } from '../ui/Drawer';
 import { useToast } from '../ui/Toast';
 import { SECTOR_CONFIGS } from '../../config/siteRules';
+import { ReportCaseSummary, HazardPin, TranscriptDetails } from '../../types';
 import { 
   ShieldAlert, 
   AlertTriangle, 
@@ -29,11 +30,11 @@ export const SafetyCasesPlan: React.FC<SafetyCasesPlanProps> = ({
   initialSelectedCaseCode 
 }) => {
   const { showToast } = useToast();
-  const [cases, setCases] = useState<any[]>([]);
-  const [pins, setPins] = useState<any[]>([]);
+  const [cases, setCases] = useState<ReportCaseSummary[]>([]);
+  const [pins, setPins] = useState<HazardPin[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedZone, setSelectedZone] = useState<string | null>(null);
-  const [selectedCase, setSelectedCase] = useState<any | null>(null);
+  const [selectedCase, setSelectedCase] = useState<ReportCaseSummary | null>(null);
   const [newStatus, setNewStatus] = useState<string>('open');
   const [supervisorNote, setSupervisorNote] = useState<string>('');
   const [updating, setUpdating] = useState<boolean>(false);
@@ -43,7 +44,7 @@ export const SafetyCasesPlan: React.FC<SafetyCasesPlanProps> = ({
   const isFirstLoadRef = useRef<boolean>(true);
 
   // Transcript view drawer & audit
-  const [transcriptData, setTranscriptData] = useState<any | null>(null);
+  const [transcriptData, setTranscriptData] = useState<TranscriptDetails | null>(null);
   const [loadingTranscript, setLoadingTranscript] = useState<boolean>(false);
 
   const siteConfig = SECTOR_CONFIGS[siteId] || SECTOR_CONFIGS['site-metro-const'];
@@ -62,7 +63,7 @@ export const SafetyCasesPlan: React.FC<SafetyCasesPlanProps> = ({
 
       // Toast when a new report arrives during background live polling
       if (!isFirstLoadRef.current) {
-        const hasNew = loadedCases.some((c: any) => !prevCaseCodesRef.current.has(c.caseCode));
+        const hasNew = loadedCases.some((c: ReportCaseSummary) => !prevCaseCodesRef.current.has(c.caseCode));
         if (hasNew) {
           showToast('New report received', 'info');
         }
@@ -70,16 +71,16 @@ export const SafetyCasesPlan: React.FC<SafetyCasesPlanProps> = ({
         isFirstLoadRef.current = false;
       }
 
-      prevCaseCodesRef.current = new Set(loadedCases.map((c: any) => c.caseCode));
+      prevCaseCodesRef.current = new Set(loadedCases.map((c: ReportCaseSummary) => c.caseCode));
       setCases(loadedCases);
       setPins(pinsData.pins || []);
       setLastUpdated(new Date());
 
       if (initialSelectedCaseCode && !isBackgroundPoll) {
-        const found = loadedCases.find((c: any) => c.caseCode === initialSelectedCaseCode);
+        const found = loadedCases.find((c: ReportCaseSummary) => c.caseCode === initialSelectedCaseCode);
         if (found) setSelectedCase(found);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (!isBackgroundPoll) console.warn('Failed to load safety plan data:', err);
     } finally {
       if (!isBackgroundPoll) setLoading(false);
@@ -127,8 +128,8 @@ export const SafetyCasesPlan: React.FC<SafetyCasesPlanProps> = ({
       showToast(`Case ${caseCode} updated to ${newStatus}`, 'success');
       setSelectedCase(null);
       fetchData();
-    } catch (err: any) {
-      showToast(err.message, 'error');
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : 'Status update failed', 'error');
     } finally {
       setUpdating(false);
     }
@@ -397,7 +398,7 @@ export const SafetyCasesPlan: React.FC<SafetyCasesPlanProps> = ({
                       <Badge variant={c.severity} label={c.severity.toUpperCase()} size="sm" />
                       <span className="text-[11px] text-[#73757C]">• {c.siteZone || c.locationDetail || 'General Site'}</span>
                       <span className="text-[10px] text-[#73757C] font-mono-code">
-                        Hour: {new Date(c.createdAtHour || c.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        Hour: {new Date(c.createdAtHour || c.createdAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
                       {c.status && (
                         <span className="text-[10px] uppercase font-semibold text-[#0F766E] bg-teal-50 px-1.5 py-0.2 rounded border border-teal-200">

@@ -17,7 +17,7 @@ export const SUPPORTED_LANGUAGES: LanguageOption[] = [
   { code: 'ta', label: 'Tamil', nativeLabel: 'தமிழ்' },
 ];
 
-const translations: Record<SupportedLanguage, any> = {
+const translations: Record<SupportedLanguage, Record<string, unknown>> = {
   en,
   hi,
   ta,
@@ -54,16 +54,16 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const t = (keyPath: string, vars?: Record<string, string | number>): string => {
     const parts = keyPath.split('.');
-    let cur: any = translations[language] || translations.en;
+    let cur: unknown = (translations as Record<string, unknown>)[language] || translations.en;
     for (const part of parts) {
-      if (cur && typeof cur === 'object' && part in cur) {
-        cur = cur[part];
+      if (cur && typeof cur === 'object' && part in (cur as Record<string, unknown>)) {
+        cur = (cur as Record<string, unknown>)[part];
       } else {
         // Fallback to English
-        let fallbackCur: any = translations.en;
+        let fallbackCur: unknown = translations.en;
         for (const fbPart of parts) {
-          if (fallbackCur && typeof fallbackCur === 'object' && fbPart in fallbackCur) {
-            fallbackCur = fallbackCur[fbPart];
+          if (fallbackCur && typeof fallbackCur === 'object' && fbPart in (fallbackCur as Record<string, unknown>)) {
+            fallbackCur = (fallbackCur as Record<string, unknown>)[fbPart];
           } else {
             return keyPath;
           }

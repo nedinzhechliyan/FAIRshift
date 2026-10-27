@@ -6,8 +6,7 @@
 import { 
   generateCaseCode, 
   applySafetyFloor, 
-  roundToHour, 
-  normalizeSubcategory 
+  roundToHour 
 } from './safetyNet';
 import { scrubLogMessage } from '../server/anonymityLogger';
 import { repository } from '../server/repository';
@@ -115,8 +114,8 @@ async function runPhase3Tests() {
   for (const fKey of forbiddenKeys) {
     assert(!reportKeys.includes(fKey), `Report object must not contain forbidden key '${fKey}'`);
   }
-  assert((newReport as any).workerId === undefined, 'workerId must be strictly undefined');
-  assert((newReport as any).ipAddress === undefined, 'ipAddress must be strictly undefined');
+  assert(!('workerId' in newReport), 'workerId must be strictly undefined');
+  assert(!('ipAddress' in newReport), 'ipAddress must be strictly undefined');
   console.log('✅ Passed: Created report contains zero worker, device, or network identifiers.\n');
 
   // TEST 5: Log Scrubber

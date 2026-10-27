@@ -5,6 +5,7 @@ import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { AudioSpeakerButton } from '../ui/AudioSpeakerButton';
 import { SECTOR_CONFIGS } from '../../config/siteRules';
+import { AnonymousReport } from '../../types';
 import { 
   ShieldAlert, 
   Receipt, 
@@ -66,11 +67,11 @@ export const VoiceReportFlow: React.FC<VoiceReportFlowProps> = ({
 
   // Result state
   const [createdCaseCode, setCreatedCaseCode] = useState<string>('');
-  const [reportResult, setReportResult] = useState<any | null>(null);
+  const [reportResult, setReportResult] = useState<AnonymousReport | null>(null);
   const [copiedCode, setCopiedCode] = useState<boolean>(false);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const timerIntervalRef = useRef<any>(null);
+  const timerIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
   // Cleanup on unmount
@@ -142,7 +143,7 @@ export const VoiceReportFlow: React.FC<VoiceReportFlowProps> = ({
         // Fallback simulation if no media devices (e.g. test runner)
         startSimulatedRecording();
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.warn('Microphone permission denied or device missing:', err);
       setPermissionDenied(true);
       setIsTextMode(true);
@@ -237,7 +238,7 @@ export const VoiceReportFlow: React.FC<VoiceReportFlowProps> = ({
       // Play vocal case code confirmation
       speakCaseCodeSpaced(data.caseCode);
       showToast(t('report.submittedTitle'), 'success');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.warn('Report submission failed:', err);
       // Fallback deterministic code generation so report is never lost
       const fallbackCode = `RPT-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;

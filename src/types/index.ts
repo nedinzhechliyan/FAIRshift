@@ -112,6 +112,8 @@ export interface AnonymousReport {
   supervisorNotes?: string;
   createdAt: string;            // Rounded to the hour (e.g. 2026-10-26T22:00:00Z)
   updatedAt: string;            // Rounded to the hour
+  createdAtHour?: string;
+  updatedAtHour?: string;
   siteZone?: string;            // Selected from site config zones
   locationDetail?: string;      // Optional extra label
 }
@@ -196,4 +198,77 @@ export interface AttritionScoreBreakdown {
   lowSkillGrowthNorm: number;
   lowSkillGrowthPoints: number;    // 5 * low_skill_growth
   recommendedAction: string;
+}
+
+export interface ReportCaseSummary {
+  id: string;
+  caseCode: string;
+  siteId: string;
+  sector: SectorType;
+  category: 'safety' | 'payment' | 'behaviour';
+  subcategory: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  urgent: boolean;
+  summaryEn: string;
+  recommendedAction: string;
+  status: 'open' | 'acknowledged' | 'in_progress' | 'resolved';
+  supervisorNotes?: string;
+  siteZone?: string;
+  locationDetail?: string;
+  possibleIdentifyingDetails?: boolean;
+  createdAt?: string;
+  createdAtHour: string;
+  updatedAtHour: string;
+}
+
+export interface HazardPin {
+  zone: string;
+  count: number;
+  reportCount?: number;
+  suppressed: boolean;
+  message?: string;
+  note?: string;
+}
+
+export interface TranscriptDetails {
+  caseCode: string;
+  originalLanguage: string;
+  transcriptOriginal: string;
+  transcriptEn: string;
+  warning: string | null;
+}
+
+export interface AttentionQueueItem {
+  id: string;
+  type: 'critical_hazard' | 'red_fatigue' | 'high_hazard' | 'aging_case';
+  rankScore: number;
+  title: string;
+  reason: string;
+  severity: 'critical' | 'high' | 'medium';
+  badgeVariant: 'critical' | 'high' | 'medium' | 'neutral' | 'success' | 'warning' | 'amber' | 'red';
+  badgeLabel: string;
+  actionType: 'open_case' | 'assign_rest' | 'acknowledge';
+  actionLabel: string;
+  targetId: string;
+  timestamp?: string;
+  workerName?: string;
+  details?: unknown;
+}
+
+export interface DailyHeatmapCell {
+  dayIndex: number;
+  dayLabel: string;
+  dateStr: string;
+  hours: number;
+  score: number;
+  band: 'green' | 'amber' | 'red' | 'rest';
+  symbol: 'G' | 'A' | 'R' | '·';
+}
+
+export interface RadarWorkerData {
+  worker: WorkerProfile;
+  fatigue: FatigueScoreBreakdown;
+  attrition: AttritionScoreBreakdown;
+  dailyHeatmap: DailyHeatmapCell[];
+  restDayAssigned?: boolean;
 }

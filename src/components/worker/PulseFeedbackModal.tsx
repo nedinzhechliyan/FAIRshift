@@ -4,6 +4,7 @@ import { useToast } from '../ui/Toast';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { AudioSpeakerButton } from '../ui/AudioSpeakerButton';
+import { PulseRating, PulseTopic } from '../../types';
 import { 
   X, 
   Frown, 
@@ -143,7 +144,7 @@ export const PulseFeedbackModal: React.FC<PulseFeedbackModalProps> = ({
                       key={item.key}
                       type="button"
                       onClick={() => {
-                        setRating(item.key as any);
+                        setRating(item.key as PulseRating);
                         setRatingValue(item.value);
                       }}
                       className={`p-2.5 rounded-[8px] border flex flex-col items-center justify-center transition-all ${
@@ -186,7 +187,7 @@ export const PulseFeedbackModal: React.FC<PulseFeedbackModalProps> = ({
                   return (
                     <div
                       key={item.key}
-                      onClick={() => setTopic(item.key as any)}
+                      onClick={() => setTopic(item.key as PulseTopic)}
                       className={`p-2.5 rounded-[6px] border cursor-pointer transition-all flex items-center justify-between ${
                         isSelected
                           ? 'border-[#0F766E] bg-[#F0FDFA] font-bold text-[#0F766E]'

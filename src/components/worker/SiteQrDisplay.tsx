@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { SECTOR_CONFIGS } from '../../config/siteRules';
-import { QrCode, RefreshCw, Clock, Copy, Check } from 'lucide-react';
+import { RefreshCw, Clock, Copy, Check } from 'lucide-react';
 
 interface SiteQrDisplayProps {
   siteId: string;

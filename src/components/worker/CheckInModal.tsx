@@ -7,6 +7,7 @@ import { AudioSpeakerButton } from '../ui/AudioSpeakerButton';
 import { offlineQueue } from '../../services/offlineQueue';
 import { SECTOR_CONFIGS } from '../../config/siteRules';
 import { formatINR } from '../../utils/formatCurrency';
+import { ShiftRecord } from '../../types';
 import { 
   QrCode, 
   MapPin, 
@@ -28,7 +29,7 @@ interface CheckInModalProps {
   workerId: string;
   siteId: string;
   activeShiftStartTime?: string;
-  onSuccess: (shiftData: any) => void;
+  onSuccess: (shiftData: Partial<ShiftRecord>) => void;
 }
 
 export const CheckInModal: React.FC<CheckInModalProps> = ({
@@ -109,10 +110,10 @@ export const CheckInModal: React.FC<CheckInModalProps> = ({
           status: type === 'check-in' ? 'active' : 'completed',
         });
       }, 1600);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setErrorMessage({
         title: 'Event Save Failed',
-        detail: err.message || 'Could not write event to local storage.',
+        detail: err instanceof Error ? err.message : 'Could not write event to local storage.',
         action: 'Retry or inform your shift gate supervisor.',
       });
       setStep('error');

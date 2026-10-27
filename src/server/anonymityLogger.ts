@@ -15,6 +15,11 @@ const SENSITIVE_PATTERNS: Array<{ regex: RegExp; replacement: string }> = [
   { regex: /"password":\s*"[^"]+"/gi, replacement: '"password":"[REDACTED]"' },
 ];
 
+/**
+ * Sanitizes a log message string by redacting IP addresses, cookies, session tokens, and base64 payloads.
+ * @param msg Raw log message
+ * @returns Sanitized log message safe for auditing
+ */
 export function scrubLogMessage(msg: string): string {
   let scrubbed = msg;
   for (const { regex, replacement } of SENSITIVE_PATTERNS) {
@@ -24,18 +29,18 @@ export function scrubLogMessage(msg: string): string {
 }
 
 /**
- * Safe logger for FairShift server
+ * Safe logger for FairShift server with automated privacy scrubbing.
  */
 export const safeLogger = {
-  info: (msg: string, ...args: any[]) => {
+  info: (msg: string, ...args: unknown[]): void => {
     const combined = [msg, ...args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a))].join(' ');
     console.log(scrubLogMessage(combined));
   },
-  warn: (msg: string, ...args: any[]) => {
+  warn: (msg: string, ...args: unknown[]): void => {
     const combined = [msg, ...args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a))].join(' ');
     console.warn(scrubLogMessage(combined));
   },
-  error: (msg: string, ...args: any[]) => {
+  error: (msg: string, ...args: unknown[]): void => {
     const combined = [msg, ...args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a))].join(' ');
     console.error(scrubLogMessage(combined));
   },

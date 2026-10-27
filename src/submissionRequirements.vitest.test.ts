@@ -4,7 +4,6 @@ import { scrubLogMessage } from './server/anonymityLogger';
 import { calculateShiftPay } from './engine/payEngine';
 import { calculateFatigueScore } from './engine/fatigueEngine';
 import { calculateAttritionRisk } from './engine/attritionEngine';
-import { applySafetyFloor } from './engine/safetyNet';
 import { formatINR } from './utils/formatCurrency';
 import { SECTOR_CONFIGS } from './config/siteRules';
 
@@ -34,7 +33,7 @@ describe('FairShift Core Submission Requirements', () => {
       
       for (const forbidden of forbiddenKeys) {
         expect(keys).not.toContain(forbidden);
-        expect((report as any)[forbidden]).toBeUndefined();
+        expect(forbidden in report).toBe(false);
       }
 
       // Check hour-level coarsening

@@ -4,6 +4,7 @@ import { useToast } from '../ui/Toast';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { AudioSpeakerButton } from '../ui/AudioSpeakerButton';
+import { AnonymousReport } from '../../types';
 import { 
   Search, 
   X, 
@@ -31,7 +32,7 @@ export const StatusLookupModal: React.FC<StatusLookupModalProps> = ({
 
   const [caseCode, setCaseCode] = useState<string>(initialCode);
   const [loading, setLoading] = useState<boolean>(false);
-  const [caseData, setCaseData] = useState<any | null>(null);
+  const [caseData, setCaseData] = useState<AnonymousReport | null>(null);
   const [notFound, setNotFound] = useState<boolean>(false);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
@@ -219,7 +220,7 @@ export const StatusLookupModal: React.FC<StatusLookupModalProps> = ({
                 </div>
                 <div className="flex justify-between text-[#73757C]">
                   <span>{t('statusLookup.lastUpdated')}:</span>
-                  <span className="font-mono-code">{new Date(caseData.updatedAtHour || caseData.createdAtHour).toLocaleDateString()}</span>
+                  <span className="font-mono-code">{new Date(caseData.updatedAtHour || caseData.createdAtHour || caseData.createdAt || Date.now()).toLocaleDateString()}</span>
                 </div>
               </div>
 

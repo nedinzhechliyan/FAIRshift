@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import type * as Leaflet from 'leaflet';
 import { SECTOR_CONFIGS } from '../../config/siteRules';
 import { Badge } from '../ui/Badge';
 import { 
@@ -19,7 +20,7 @@ interface SiteMapViewProps {
 
 export const SiteMapView: React.FC<SiteMapViewProps> = ({ siteId }) => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
-  const mapInstanceRef = useRef<any>(null);
+  const mapInstanceRef = useRef<Leaflet.Map | null>(null);
 
   const [loading, setLoading] = useState<boolean>(true);
   const [mapError, setMapError] = useState<boolean>(false);
@@ -125,7 +126,7 @@ export const SiteMapView: React.FC<SiteMapViewProps> = ({ siteId }) => {
 
         mapInstanceRef.current = map;
         setLoading(false);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.warn('[FairShift Map] Leaflet dynamic loading failed, rendering SVG fallback:', err);
         setMapError(true);
         setLoading(false);

@@ -13,6 +13,7 @@ import { PulseFeedbackModal } from './PulseFeedbackModal';
 import { offlineQueue } from '../../services/offlineQueue';
 import { formatINR } from '../../utils/formatCurrency';
 import { SECTOR_CONFIGS, LEGAL_DISCLAIMER_NOTE } from '../../config/siteRules';
+import { ShiftRecord } from '../../types';
 import { 
   Clock, 
   MapPin, 
@@ -53,7 +54,7 @@ export const WorkerHome: React.FC<WorkerHomeProps> = ({
   const { t, language, setLanguage } = useI18n();
   const { showToast } = useToast();
 
-  const [activeShift, setActiveShift] = useState<any | null>(null);
+  const [activeShift, setActiveShift] = useState<Partial<ShiftRecord> | null>(null);
   const [loadingShift, setLoadingShift] = useState(true);
   const [isCheckInModalOpen, setIsCheckInModalOpen] = useState(false);
   const [currentView, setCurrentView] = useState<'home' | 'payslip' | 'my-pay' | 'report-preview'>('home');

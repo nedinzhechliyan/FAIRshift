@@ -210,9 +210,10 @@ class OfflineQueueService {
 
           await this.markEventStatus(event.uuid, 'synced');
           syncedCount++;
-        } catch (err: any) {
-          console.warn(`[FairShift Sync] Sync failed for event ${event.uuid}:`, err.message);
-          await this.markEventStatus(event.uuid, 'failed', err.message);
+        } catch (err: unknown) {
+          const errMsg = err instanceof Error ? err.message : String(err);
+          console.warn(`[FairShift Sync] Sync failed for event ${event.uuid}:`, errMsg);
+          await this.markEventStatus(event.uuid, 'failed', errMsg);
           errors++;
         }
       }

@@ -70,7 +70,7 @@ export const FatigueRadar: React.FC<FatigueRadarProps> = ({ siteId, initialWorke
         const found = list.find(w => w.worker.id === initialWorkerId);
         if (found) setSelectedWorkerData(found);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.warn('Radar fetch failed:', err);
     } finally {
       setLoading(false);
@@ -129,8 +129,8 @@ export const FatigueRadar: React.FC<FatigueRadarProps> = ({ siteId, initialWorke
         const found = (updated.workers || []).find((w: RadarWorkerData) => w.worker.id === workerId);
         if (found) setSelectedWorkerData(found);
       }
-    } catch (err: any) {
-      showToast(err.message, 'error');
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : 'Error assigning rest day', 'error');
     } finally {
       setAssigningRestId(null);
     }

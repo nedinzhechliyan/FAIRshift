@@ -1,7 +1,6 @@
-import { calculateShiftPay, calculateDurationHours } from './payEngine';
+import { calculateShiftPay } from './payEngine';
 import { generateSiteQrToken, verifySiteQrToken, isWithinGeofence, haversineDistanceMeters } from '../utils/security';
 import { validatePayslipExplanation, getDeterministicPayslipTemplate } from './payslipValidator';
-import { formatINR } from '../utils/formatCurrency';
 import { SECTOR_CONFIGS } from '../config/siteRules';
 
 function assert(condition: boolean, message: string) {

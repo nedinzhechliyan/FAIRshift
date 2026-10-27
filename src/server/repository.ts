@@ -4,14 +4,15 @@ import {
   AnonymousReport, 
   FeedbackPulse, 
   SkillPassport,
-  SectorType 
+  SectorType,
+  AttentionQueueItem,
+  RadarWorkerData
 } from '../types';
 import { generateSeedData, SeedDataStore } from '../data/seedData';
 import { calculateShiftPay, calculateDurationHours } from '../engine/payEngine';
 import { calculateFatigueScore } from '../engine/fatigueEngine';
 import { calculateAttritionRisk } from '../engine/attritionEngine';
 import { SECTOR_CONFIGS } from '../config/siteRules';
-import { FatigueScoreBreakdown, AttritionScoreBreakdown } from '../types';
 
 class DataRepository {
   private inMemoryStore: SeedDataStore;
@@ -186,9 +187,12 @@ class DataRepository {
     const existingCodes = new Set(this.inMemoryStore.reports.map(r => r.caseCode));
     const chars = '23456789ABCDEFGHJKMNPQRSTUVWXYZ'; // Unambiguous alphabet (no 0/O/1/I/L)
     let code = 'RPT-';
-    for (let i = 0; i < 4; i++) {
-      code += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
+    do {
+      code = 'RPT-';
+      for (let i = 0; i < 4; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+    } while (existingCodes.has(code));
 
     // Round timestamp to the hour for anonymity
     const hourTimestamp = new Date(Math.floor(Date.now() / 3600000) * 3600000).toISOString();
@@ -464,8 +468,8 @@ class DataRepository {
   }
 
   // --- ATTENTION QUEUE (5-8 RANKED ITEMS FOR TODAY) ---
-  async getAttentionQueue(siteId: string): Promise<any[]> {
-    const queueItems: any[] = [];
+  async getAttentionQueue(siteId: string): Promise<AttentionQueueItem[]> {
+    const queueItems: AttentionQueueItem[] = [];
     const now = Date.now();
 
     // 1. Critical & High open safety/payment reports
@@ -560,12 +564,11 @@ class DataRepository {
   }
 
   // --- RADAR WORKERS (14-DAY HEATMAP & WHY BREAKDOWN) ---
-  async getWorkerRadarItem(workerId: string): Promise<any | null> {
+  async getWorkerRadarItem(workerId: string): Promise<RadarWorkerData | null> {
     const worker = await this.getWorkerById(workerId);
     if (!worker) return null;
 
     const hasAssignedRestDay = this.assignedRestDays.has(workerId);
-    const now = new Date('2026-10-26T17:00:00Z');
 
     // Deterministic profile for designated characters
     if (workerId === 'worker_const_01') {
@@ -726,13 +729,13 @@ class DataRepository {
     return result;
   }
 
-  async getRadarWorkers(siteId: string): Promise<any[]> {
+  async getRadarWorkers(siteId: string): Promise<RadarWorkerData[]> {
     const workers = await this.getWorkers(siteId);
     // Return radar items for up to 25 workers
     const radarItems = await Promise.all(
       workers.slice(0, 25).map(w => this.getWorkerRadarItem(w.id))
     );
-    return radarItems.filter(Boolean);
+    return radarItems.filter((item): item is RadarWorkerData => item !== null);
   }
 }
 

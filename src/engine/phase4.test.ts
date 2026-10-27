@@ -74,14 +74,14 @@ async function runPhase4Tests() {
 
   // Re-fetch radar data for Ramesh
   const rameshRadar = await repository.getWorkerRadarItem('worker_const_01');
-  assert(rameshRadar.restDayAssigned === true, 'Radar record must reflect restDayAssigned: true');
-  assert(rameshRadar.fatigue.band !== 'red', `Radar fatigue band must be non-red, got ${rameshRadar.fatigue.band}`);
+  assert(Boolean(rameshRadar && rameshRadar.restDayAssigned === true), 'Radar record must reflect restDayAssigned: true');
+  assert(rameshRadar!.fatigue.band !== 'red', `Radar fatigue band must be non-red, got ${rameshRadar!.fatigue.band}`);
   
   // Verify today heatmap cell shows rest '·'
-  const todayCell = rameshRadar.dailyHeatmap[rameshRadar.dailyHeatmap.length - 1];
+  const todayCell = rameshRadar!.dailyHeatmap[rameshRadar!.dailyHeatmap.length - 1];
   assert(todayCell.symbol === '·', `Today heatmap symbol must be '·' (rest), got ${todayCell.symbol}`);
   assert(todayCell.band === 'rest', `Today heatmap band must be 'rest', got ${todayCell.band}`);
-  console.log(`✅ Passed: "Assign rest day" immediately dropped Ramesh score to ${rameshRadar.fatigue.score} (${rameshRadar.fatigue.band}) and updated 14-day heatmap.\n`);
+  console.log(`✅ Passed: "Assign rest day" immediately dropped Ramesh score to ${rameshRadar!.fatigue.score} (${rameshRadar!.fatigue.band}) and updated 14-day heatmap.\n`);
 
   // TEST 4: Attrition "Why" Uses Team-Level Sentiment Only (Privacy Preservation)
   console.log('--- Test 4: Attrition Privacy Preservation (Team Sentiment Only) ---');
