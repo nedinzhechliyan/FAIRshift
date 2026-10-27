@@ -98,9 +98,62 @@ Run all deterministic engine, anonymity, and cross-device integration verificati
 npm test
 ```
 The test suite validates:
-- Pay Engine: Base ₹180/hr, 8h regular, 1.5h OT @ 2x, ₹200 advance $\rightarrow$ Gross ₹1,980, Net ₹1,780.
-- Fatigue Engine: Story worker Ramesh Kumar calibrated to red band ($\ge 70$, score 75).
+- Pay Engine: Base ₹180/hr, 8h regular, 1.5h OT @ 2x, ₹200 advance → Gross ₹1,980, Net ₹1,780.
+- Fatigue Engine: Story worker Ramesh Kumar calibrated to red band (≥ 70, score 75).
 - Boundary tests at 39/40 (Green/Amber) and 69/70 (Amber/Red).
 - Anonymity Contract: No `worker_id` stored, hour-level rounding, prompt injection defense, and small-group suppression.
-- Cross-Device Demo Loop: Worker report submission $\rightarrow$ Supervisor case list visibility $\rightarrow$ Supervisor status/note update $\rightarrow$ Worker case-code lookup verification across independent clients.
+- Cross-Device Demo Loop: Worker report submission → Supervisor case list visibility → Supervisor status/note update → Worker case-code lookup verification across independent clients.
 
+---
+
+## 3-Command Setup
+
+```bash
+# 1. Install dependencies
+npm install
+
+# 2. Run test verification suite
+npm test
+
+# 3. Start development server (serves worker PWA & employer console)
+npm run dev
+```
+
+---
+
+## Environment Variables
+
+| Variable | Description | Required | Default / Note |
+| :--- | :--- | :--- | :--- |
+| `GEMINI_API_KEY` | Optional. Google Gemini API key for live voice transcription & summary analysis. If omitted, deterministic fallbacks and local multilingual NLP engines operate seamlessly. | No | `MY_GEMINI_API_KEY` (placeholder) |
+| `APP_URL` | Application root URL for self-referential links and OAuth callbacks. | No | `http://localhost:3000` |
+| `PORT` | Local server port. | No | `3000` |
+
+*Note: The platform is designed with graceful degradation and boots cleanly even when no environment variables are set.*
+
+---
+
+## Security & Accessibility Notes
+
+- **Zero Secret Leaks**: Verified by automated audits (`git grep` checks for `AIza`, private keys, and service roles return zero matches).
+- **Zod Schema Validation**: Applied across API endpoints with extra fields stripped and sanitized JSON responses (no internal stack traces exposed).
+- **WCAG 2.1 AA Compliance**:
+  - Touch targets calibrated to ≥ 56px (58px primary mobile buttons).
+  - High contrast ratios (≥ 4.5:1 text-to-background).
+  - Full keyboard accessibility and focus rings.
+  - Screen reader semantic markup with `aria-live` announcement regions and tabular numeral spacing.
+  - Trilingual language tags (`lang="en"`, `lang="hi"`, `lang="ta"`).
+
+---
+
+## Limitations & Future Scope
+
+1. **Skill Passport**: Blockchain or digitally signed verifiable credentials for cross-employer portability.
+2. **Bhashini Integration**: Dedicated government-backed Indian language speech models for edge-case rural dialects.
+3. **Web Push Notifications**: Service-worker based background push notifications for offline shift alerts.
+
+---
+
+## Statutory & Legal Notice
+
+> **FairShift supports transparency and helps employers align with working-hour norms; it is not legal advice.**

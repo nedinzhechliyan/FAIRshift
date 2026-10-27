@@ -84,9 +84,9 @@ async function runPhase3Tests() {
   const exactTime = new Date('2026-10-27T14:38:42.812Z');
   const rounded = roundToHour(exactTime);
   const roundedDate = new Date(rounded);
-  assert(roundedDate.getMinutes() === 0, 'Minutes must be 0');
-  assert(roundedDate.getSeconds() === 0, 'Seconds must be 0');
-  assert(roundedDate.getMilliseconds() === 0, 'Milliseconds must be 0');
+  assert(roundedDate.getUTCMinutes() === 0, 'Minutes must be 0');
+  assert(roundedDate.getUTCSeconds() === 0, 'Seconds must be 0');
+  assert(roundedDate.getUTCMilliseconds() === 0, 'Milliseconds must be 0');
   assert(roundedDate.getUTCHours() === 14, 'UTC Hour must remain 14');
   console.log(`✅ Passed: Exact time ${exactTime.toISOString()} coarsened to ${rounded}.\n`);
 

@@ -51,9 +51,9 @@ async function runCrossDeviceDemoLoopTests() {
 
   // Verify temporal coarsening (hour rounding)
   const createdDate = new Date(createdReport.createdAt);
-  assert(createdDate.getMinutes() === 0, 'Created timestamp minutes must be rounded to 0');
-  assert(createdDate.getSeconds() === 0, 'Created timestamp seconds must be rounded to 0');
-  assert(createdDate.getMilliseconds() === 0, 'Created timestamp milliseconds must be rounded to 0');
+  assert(createdDate.getUTCMinutes() === 0, 'Created timestamp minutes must be rounded to 0');
+  assert(createdDate.getUTCSeconds() === 0, 'Created timestamp seconds must be rounded to 0');
+  assert(createdDate.getUTCMilliseconds() === 0, 'Created timestamp milliseconds must be rounded to 0');
 
   console.log(`✅ Passed: Worker submitted report. Generated secret case code: ${createdReport.caseCode}`);
   console.log(`   Hour-coarsened timestamp: ${createdReport.createdAt}`);
