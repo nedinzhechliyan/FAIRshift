@@ -1,0 +1,9 @@
+{
+  "name": "FairShift",
+  "description": "Worker-trust and workforce-risk platform for shift-heavy workplaces in India, advancing UN SDG 8 Decent Work with transparent pay, fatigue radar, and anonymous voice safety reporting.",
+  "requestFramePermissions": [
+    "geolocation",
+    "microphone"
+  ],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
